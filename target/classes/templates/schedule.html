@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Расписание - Школа плавания Жемчужина</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/jpeg" href="/images/icona.jpg">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">🏊 <span>Жемчужина</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/trainers">Тренеры</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/prices">Цены</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/schedule">Расписание</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contacts">Контакты</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="nav-link" href="/login">Войти</a></li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="nav-link btn btn-light text-primary fw-bold" href="/register" style="border-radius:50px;padding:0.5rem 1.5rem!important">Регистрация</a></li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" href="/profile">Личный кабинет</a></li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" href="/admin">Админка</a></li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" href="/logout">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Расписание занятий</h1>
+                <p>Выберите удобное время для посещения</p>
+            </div>
+        </section>
+
+        <div class="bg-white py-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center mb-3">
+                        <h4 class="fw-bold">Большая чаша</h4>
+                        <img src="/images/raspisanieB.jpg" alt="Большая чаша" class="img-fluid rounded pool-img">
+                    </div>
+                    <div class="col-md-6 text-center mb-3">
+                        <h4 class="fw-bold">Малая чаша</h4>
+                        <img src="/images/raspisanieM.jpg" alt="Малая чаша" class="img-fluid rounded pool-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container page-wrapper">
+            <div class="filter-section">
+                <form method="get" action="/schedule" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Тренер</label>
+                        <select name="trainer" class="form-select" onchange="this.form.submit()">
+                            <option value="">Все тренеры</option>
+                            <option th:each="t : ${trainers}" th:value="${t.id}" th:text="${t.name}" th:selected="${param.trainer != null and param.trainer[0] == t.id.toString()}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">День недели</label>
+                        <select name="day" class="form-select" onchange="this.form.submit()">
+                            <option value="">Все дни</option>
+                            <option th:each="d : ${days}" th:value="${d}" th:text="${d}" th:selected="${param.day != null and param.day[0] == d}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/schedule" class="btn btn-outline-secondary">Сбросить</a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th>День</th>
+                            <th>Время</th>
+                            <th>Группа</th>
+                            <th>Тренер</th>
+                            <th>Мест</th>
+                            <th>Цена</th>
+                            <th sec:authorize="isAuthenticated()">Запись</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${schedules}">
+                            <td><span class="badge bg-soft-primary" th:text="${s.dayOfWeek}"></span></td>
+                            <td th:text="${s.startTime} + ' - ' + ${s.endTime}"></td>
+                            <td th:text="${s.trainingGroup != null ? s.trainingGroup.name : '—'}"></td>
+                            <td th:text="${s.trainer != null ? s.trainer.name : '—'}"></td>
+                            <td th:text="${s.maxCapacity}"></td>
+                            <td><strong th:text="${s.pricePerSession != null ? s.pricePerSession + ' ₽' : '—'}"></strong></td>
+                            <td sec:authorize="isAuthenticated()">
+                                <a th:href="@{/profile/book(scheduleId=${s.id})}" class="btn btn-sm btn-primary">Записаться</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>🏊 Жемчужина</h5>
+                    <p>Школа плавания для детей от 2 лет.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Меню</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/">Главная</a></li>
+                        <li class="mb-2"><a href="/trainers">Тренеры</a></li>
+                        <li class="mb-2"><a href="/prices">Цены</a></li>
+                        <li class="mb-2"><a href="/schedule">Расписание</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Контакты</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">Воронежская область Рамонский район, р.п. Рамонь ул. 50 лет Октября, 7В</li>
+                        <li class="mb-2">+7(47340) 2-27-53</li>
+                        <li class="mb-2">sport.ramon@yandex.ru </li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Режим работы</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">с 8:00 до 22:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Школа плавания &laquo;Жемчужина&raquo;</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

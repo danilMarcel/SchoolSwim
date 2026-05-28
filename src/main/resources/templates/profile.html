@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Личный кабинет - Школа плавания Жемчужина</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/jpeg" href="/images/icona.jpg">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">🏊 <span>Жемчужина</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/trainers">Тренеры</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/prices">Цены</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/schedule">Расписание</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contacts">Контакты</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/admin" sec:authorize="hasRole('ADMIN')">Админка</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <h1 class="mb-4">Личный кабинет</h1>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="profile-sidebar">
+                    <div class="profile-avatar">👤</div>
+                    <h4 th:text="${user.fullName != null and !user.fullName.isEmpty() ? user.fullName : user.username}"></h4>
+                    <p th:text="${user.email}"></p>
+                    <p th:text="${user.phone}"></p>
+                    <hr class="bg-light">
+                    <a href="/prices" class="btn btn-light w-100 mb-2">Купить абонемент</a>
+                    <a href="/profile/book" class="btn btn-outline-light w-100">Записаться</a>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-white fw-bold fs-5">
+                        📋 Мои абонементы
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${subscriptions.isEmpty()}" class="text-center py-4">
+                            <p class="text-muted mb-3">У вас пока нет абонементов</p>
+                            <a href="/prices" class="btn btn-primary">Приобрести абонемент</a>
+                        </div>
+                        <div th:unless="${subscriptions.isEmpty()}">
+                            <div class="row g-3">
+                                <div class="col-md-6" th:each="us : ${subscriptions}">
+                                    <div class="card border">
+                                        <div class="card-body">
+                                            <h5 class="fw-bold" th:text="${us.subscription.name}"></h5>
+                                            <p class="text-muted mb-2">Куплен: <span th:text="${#temporals.format(us.purchaseDate, 'dd.MM.yyyy')}"></span></p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-muted">Осталось:</span>
+                                                <span class="badge bg-success fs-6" th:text="${us.remainingSessions}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-white fw-bold fs-5 d-flex justify-content-between align-items-center">
+                        <span>📅 Мои записи</span>
+                        <a href="/profile/book" class="btn btn-sm btn-primary">+ Записаться</a>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${bookings.isEmpty()}" class="text-center py-4">
+                            <p class="text-muted">У вас пока нет записей</p>
+                            <a href="/profile/book" class="btn btn-primary">Записаться на занятие</a>
+                        </div>
+                        <div th:unless="${bookings.isEmpty()}" class="table-responsive">
+                            <table class="table table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Время</th>
+                                        <th>Тренер</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="b : ${bookings}">
+                                        <td th:text="${#temporals.format(b.bookingDate, 'dd.MM.yyyy')}"></td>
+                                        <td th:text="${b.schedule.startTime} + ' - ' + ${b.schedule.endTime}"></td>
+                                        <td th:text="${b.schedule.trainer.name}"></td>
+                                        <td>
+                                            <span th:if="${b.status == 'CONFIRMED' and b.bookingDate.compareTo(today) < 0}" class="badge bg-secondary">Прошло</span>
+                                            <span th:if="${b.status == 'CONFIRMED' and b.bookingDate.compareTo(today) >= 0}" class="badge bg-primary">Подтверждено</span>
+                                            <span th:if="${b.status == 'COMPLETED'}" class="badge bg-success">Посещено</span>
+                                            <span th:if="${b.status == 'CANCELLED'}" class="badge bg-danger">Отменено</span>
+                                        </td>
+                                        <td>
+                                            <form th:if="${b.status == 'CONFIRMED' and b.bookingDate.compareTo(today) >= 0}" method="post" th:action="@{/profile/cancel/{id}(id=${b.id})}">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Отменить</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Школа плавания &laquo;Жемчужина&raquo;</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

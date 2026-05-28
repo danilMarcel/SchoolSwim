@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Школа плавания Жемчужина</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/jpeg" href="/images/icona.jpg">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">🏊 <span>Жемчужина</span></a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/trainers">Тренеры</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/prices">Цены</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/schedule">Расписание</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contacts">Контакты</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" href="/login">Войти</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link btn btn-light text-primary fw-bold" href="/register" style="border-radius:50px;padding:0.5rem 1.5rem!important">Регистрация</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/profile">Личный кабинет</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" href="/admin">Админка</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/logout">Выйти</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero text-white">
+            <div class="container hero-content text-center">
+                <h1 class="fade-in-up">Школа плавания <span style="color:#00bcd4">«Жемчужина»</span></h1>
+
+                <p class="fade-in-up" style="animation-delay:0.2s">Научите вашего ребёнка плавать с лучшими тренерами!</p>
+                <div class="fade-in-up" style="animation-delay:0.4s">
+                    <a href="/register" class="btn btn-light btn-lg me-3">Записаться на пробное</a>
+                    <a href="/prices" class="btn btn-outline-light btn-lg">Наши цены</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="container my-5">
+            <div class="section-title fade-in-up">
+                <h2>Наши группы</h2>
+                <p>Занятия для детей от 2 лет</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6" th:each="group : ${groups}">
+                    <div class="feature-card">
+                        <div class="feature-icon" th:text="${group.poolType == 'SMALL' ? '👶' : '🏊'}"></div>
+                        <h5 th:text="${group.name}"></h5>
+                        <p th:text="${group.description}"></p>
+                        <p class="mb-2"><strong>Возраст:</strong> <span th:text="${group.minAge}"></span> - <span th:text="${group.maxAge}"></span> лет</p>
+                        <p class="mb-3" th:if="${group.trainer != null}">
+                            <strong>Тренер:</strong> <span th:text="${group.trainer.name}"></span>
+                        </p>
+                        <a href="/prices" class="btn btn-outline-primary">Подробнее о ценах</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-light py-5">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Почему выбирают нас?</h2>
+                    <p>Четыре причины доверить нам обучение вашего ребёнка</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">👨‍🏫</div>
+                            <h5>Опытные тренеры</h5>
+                            <p>Сертифицированные специалисты с многолетним стажем работы с детьми</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">🏊</div>
+                            <h5>Современный бассейн</h5>
+                            <p>Чистая вода, комфортная температура, система очистки нового поколения</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">👶</div>
+                            <h5>Индивидуальный подход</h5>
+                            <p>Программа для каждого возраста и уровня подготовки, небольшие группы</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">📅</div>
+                            <h5>Гибкое расписание</h5>
+                            <p>Удобное время занятий, работаем без выходных, легко перенести занятие</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>🏊 Жемчужина</h5>
+                    <p>Школа плавания для детей от 2 лет. Научим вашего ребёнка плавать с нуля и подготовим к соревнованиям.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Меню</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/">Главная</a></li>
+                        <li class="mb-2"><a href="/trainers">Тренеры</a></li>
+                        <li class="mb-2"><a href="/prices">Цены</a></li>
+                        <li class="mb-2"><a href="/schedule">Расписание</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Контакты</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">Воронежская обл., Рамонский р-н, р.п. Рамонь, ул. 50 лет Октября, 7В</li>
+                        <li class="mb-2">+7 (47340) 2-27-53</li>
+                        <li class="mb-2">sport.ramon@yandex.ru</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Режим работы</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">с 8:00 до 22:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="mb-0">&copy; 2026 Школа плавания &laquo;Жемчужина&raquo;</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

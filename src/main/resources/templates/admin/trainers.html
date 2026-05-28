@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Тренеры - Админка</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/jpeg" href="/images/icona.jpg">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark admin-nav">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">⚙️ Жемчужина Админ</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/admin">Дашборд</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/admin/trainers">Тренеры</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/subscriptions">Абонементы</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/schedules">Расписание</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/attendance">Посещаемость</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/reports">Отчеты</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/">На сайт</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <h1 class="mb-4">Управление тренерами</h1>
+
+        <div class="row g-4">
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        ➕ Добавить тренера
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:action="@{/admin/trainers/save}">
+                            <input type="hidden" name="id">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Имя</label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Описание</label>
+                                <textarea name="description" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Стаж</label>
+                                <input type="text" name="experience" class="form-control" placeholder="8 лет">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Образование</label>
+                                <input type="text" name="education" class="form-control" placeholder="РГУФКСМиТ, кафедра плавания">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">URL фото</label>
+                                <input type="text" name="photoUrl" class="form-control" placeholder="/images/trainer1.jpg">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header bg-dark text-white fw-bold">
+                        📋 Список тренеров
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Имя</th>
+                                        <th>Стаж</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="t : ${trainers}">
+                                        <td th:text="${t.id}"></td>
+                                        <td th:text="${t.name}"></td>
+                                        <td th:text="${t.experience}"></td>
+                                        <td>
+                                            <a th:href="@{/admin/trainers/delete/{id}(id=${t.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Удалить тренера?')">Удалить</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

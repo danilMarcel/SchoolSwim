@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Запись на занятие - Школа плавания Жемчужина</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/jpeg" href="/images/icona.jpg">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">🏊 <span>Жемчужина</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/trainers">Тренеры</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/prices">Цены</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/schedule">Расписание</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/profile">Личный кабинет</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <h1 class="mb-4">Запись на занятие</h1>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <form method="post" th:action="@{/profile/book}">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Тренер</label>
+                            <select class="form-select" id="trainerSelect" onchange="filterSchedules()">
+                                <option value="">Все тренеры</option>
+                                <option th:each="t : ${trainers}" th:value="${t.id}" th:text="${t.name}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">День недели</label>
+                            <select class="form-select" id="daySelect" onchange="filterSchedules()">
+                                <option value="">Все дни</option>
+                                <option th:each="d : ${days}" th:value="${d}" th:text="${d}" th:selected="${param.day != null and param.day[0] == d}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Время занятия</label>
+                            <select name="scheduleId" class="form-select" required>
+                                <option value="">-- Выберите --</option>
+                                <option th:each="s : ${schedules}"
+                                        th:value="${s.id}"
+                                        th:text="${s.dayOfWeek + ' | ' + s.startTime + '-' + s.endTime + ' | ' + (s.trainer != null ? s.trainer.name : '') + ' | ' + (s.trainingGroup != null ? s.trainingGroup.name : '')}"
+                                        th:attr="data-trainer=${s.trainer != null ? s.trainer.id : ''}, data-day=${s.dayOfWeek}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Дата занятия</label>
+                            <input type="date" name="bookingDate" class="form-control" th:min="${today}" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Абонемент</label>
+                            <select name="userSubscriptionId" class="form-select" required>
+                                <option value="">-- Выберите --</option>
+                                <option th:each="us : ${subscriptions}"
+                                        th:value="${us.id}"
+                                        th:text="${us.subscription.name} + ' (осталось: ' + ${us.remainingSessions} + ')'">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg">Записаться</button>
+                            <a href="/profile" class="btn btn-secondary btn-lg ms-2">Отмена</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function filterSchedules() {
+            const trainer = document.getElementById('trainerSelect').value;
+            const day = document.getElementById('daySelect').value;
+            const options = document.querySelectorAll('select[name="scheduleId"] option');
+            options.forEach(opt => {
+                if (!opt.value) return;
+                const matchesTrainer = !trainer || opt.dataset.trainer === trainer;
+                const matchesDay = !day || opt.dataset.day === day;
+                opt.style.display = (matchesTrainer && matchesDay) ? '' : 'none';
+            });
+        }
+    </script>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Школа плавания &laquo;Жемчужина&raquo;</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

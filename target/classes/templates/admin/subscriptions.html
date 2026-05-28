@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Абонементы - Админка</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/jpeg" href="/images/icona.jpg">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark admin-nav">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">⚙️ Жемчужина Админ</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/admin">Дашборд</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/trainers">Тренеры</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/admin/subscriptions">Абонементы</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/schedules">Расписание</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/attendance">Посещаемость</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/reports">Отчеты</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/">На сайт</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <h1 class="mb-4">Управление абонементами</h1>
+
+        <div class="row g-4">
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        ➕ Добавить абонемент
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:action="@{/admin/subscriptions/save}">
+                            <input type="hidden" name="id">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Название</label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Описание</label>
+                                <textarea name="description" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Цена (₽)</label>
+                                    <input type="number" name="price" step="0.01" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Кол-во занятий</label>
+                                    <input type="number" name="sessionsCount" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Длительность (мин)</label>
+                                    <input type="number" name="durationMinutes" class="form-control" value="45">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Макс. учеников</label>
+                                    <input type="number" name="maxStudents" class="form-control" value="1">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header bg-dark text-white fw-bold">
+                        📋 Список абонементов
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Название</th>
+                                        <th>Цена</th>
+                                        <th>Занятий</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="s : ${subscriptions}">
+                                        <td th:text="${s.id}"></td>
+                                        <td th:text="${s.name}"></td>
+                                        <td th:text="${s.price} + ' ₽'"></td>
+                                        <td th:text="${s.sessionsCount}"></td>
+                                        <td>
+                                            <span th:if="${s.isActive}" class="badge bg-success">Активен</span>
+                                            <span th:unless="${s.isActive}" class="badge bg-danger">Неактивен</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

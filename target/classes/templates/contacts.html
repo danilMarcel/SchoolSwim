@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Контакты - Школа плавания Жемчужина</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/jpeg" href="/images/icona.jpg">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">🏊 <span>Жемчужина</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/trainers">Тренеры</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/prices">Цены</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/schedule">Расписание</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/contacts">Контакты</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="nav-link" href="/login">Войти</a></li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()"><a class="nav-link btn btn-light text-primary fw-bold" href="/register" style="border-radius:50px;padding:0.5rem 1.5rem!important">Регистрация</a></li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" href="/profile">Личный кабинет</a></li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" href="/logout">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Контакты</h1>
+                <p>Как с нами связаться и где мы находимся</p>
+            </div>
+        </section>
+
+        <div class="container page-wrapper">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="mb-4">📍 Как нас найти</h3>
+                            <div class="mb-3">
+                                <p class="mb-2"><strong>Адрес:</strong></p>
+                                <p>Воронежская область Рамонский район, р.п. Рамонь ул. 50 лет Октября, 7В, бассейн «Жемчужина»</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="mb-2"><strong>Телефон:</strong></p>
+                                <p><a href="tel:+74734022753" class="text-decoration-none">+7 (47340) 2-27-53</a></p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="mb-2"><strong>Email:</strong></p>
+                                <p><a href="mailto:sport.ramon@yandex.ru" class="text-decoration-none">sport.ramon@yandex.ru</a></p>
+                            </div>
+                            <hr>
+                            <h4>Режим работы</h4>
+                            <ul class="list-unstyled">
+                                <li class="py-1"><span class="fw-bold"></span> с 8:00 до 22:00</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="mb-4">✉️ Связаться с нами</h3>
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">Ваше имя</label>
+                                    <input type="text" class="form-control" placeholder="Иван Иванов">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" placeholder="ivan@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Сообщение</label>
+                                    <textarea class="form-control" rows="4" placeholder="Напишите ваш вопрос..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Отправить</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>🏊 Жемчужина</h5>
+                    <p>Школа плавания для детей от 2 до 18 лет.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Меню</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/">Главная</a></li>
+                        <li class="mb-2"><a href="/trainers">Тренеры</a></li>
+                        <li class="mb-2"><a href="/prices">Цены</a></li>
+                        <li class="mb-2"><a href="/schedule">Расписание</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Контакты</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">Воронежская область Рамонский район, р.п. Рамонь ул. 50 лет Октября, 7В</li>
+                        <li class="mb-2"> +7(47340) 2-27-53</li>
+                        <li class="mb-2">sport.ramon@yandex.ru </li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Режим работы</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">с 8:00 до 22:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Школа плавания &laquo;Жемчужина&raquo;</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
